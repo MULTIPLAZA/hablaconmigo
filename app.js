@@ -35,6 +35,8 @@ const BIBLIOTECA = [
   { palabra: 'cama',      cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/cama.svg' },
   { palabra: 'sillón',    cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/sillon.svg' },
   { palabra: 'jugar',     cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/jugar.svg' },
+  { palabra: 'moto',      cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/moto.svg' },
+  { palabra: 'caca',      cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/caca.svg' },
 
   // acciones
   { palabra: 'dame',      cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/dame.svg' },
@@ -43,10 +45,12 @@ const BIBLIOTECA = [
   { palabra: 'sacar',     cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/sacar.svg' },
 
   // sentimientos
-  { palabra: 'contento',  cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/contento.svg' },
-  { palabra: 'triste',    cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/triste.svg' },
-  { palabra: 'duele',     cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/duele.svg' },
-  { palabra: 'miedo',     cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/miedo.svg' },
+  { palabra: 'contento',     cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/contento.svg' },
+  { palabra: 'triste',       cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/triste.svg' },
+  { palabra: 'duele',        cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/duele.svg' },
+  { palabra: 'miedo',        cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/miedo.svg' },
+  { palabra: 'enojado',      cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/enojado.svg' },
+  { palabra: 'bravo Mariano', etiqueta: 'bravo', cat: 'sentimientos', color: '#fef3c7', imagen: 'seed-images/bravo.svg' },
 
   // lugares
   { palabra: 'afuera',    cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/afuera.svg' },
@@ -209,7 +213,7 @@ async function seedSiHaceFalta() {
     const dataUrl = await svgUrlToDataUrl(seed.imagen);
     await dbPut(STORE_BOTONES, {
       palabra: seed.palabra,
-      etiqueta: seed.palabra,
+      etiqueta: seed.etiqueta || seed.palabra,
       imagen: dataUrl,
       audio: null,
       color: seed.color,
@@ -764,7 +768,7 @@ function renderBiblioteca() {
       if (yaUsadas.has(it.palabra)) card.classList.add('bib-usado');
       card.innerHTML = `
         <img src="${it.imagen}" alt="" />
-        <div class="bib-label">${it.palabra}</div>
+        <div class="bib-label">${it.etiqueta || it.palabra}</div>
         ${yaUsadas.has(it.palabra) ? '<div class="bib-check">YA</div>' : ''}
       `;
       card.addEventListener('click', async () => {
@@ -776,7 +780,7 @@ function renderBiblioteca() {
         const orden = State.botones.length;
         await dbPut(STORE_BOTONES, {
           palabra: it.palabra,
-          etiqueta: it.palabra,
+          etiqueta: it.etiqueta || it.palabra,
           imagen: dataUrl,
           audio: null,
           color: it.color,

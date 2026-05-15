@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fef3c7"/>
+  <!-- caca emoji por capas (espiral) -->
+  <ellipse cx="100" cy="170" rx="65" ry="12" fill="#7c2d12"/>
+  <path d="M40 165 Q40 130 65 125 Q60 105 85 100 Q80 80 105 75 Q100 55 125 50 Q138 48 140 60 Q140 70 130 75 Q150 80 150 95 Q150 105 138 110 Q160 115 160 130 Q160 145 145 150 Q170 155 165 170 Z" fill="#92400e" stroke="#451a03" stroke-width="2"/>
+  <!-- brillitos -->
+  <ellipse cx="105" cy="68" rx="6" ry="3" fill="#a16207" opacity=".6"/>
+  <ellipse cx="125" cy="100" rx="6" ry="3" fill="#a16207" opacity=".6"/>
+  <ellipse cx="100" cy="125" rx="6" ry="3" fill="#a16207" opacity=".6"/>
+  <!-- ojos -->
+  <ellipse cx="85" cy="135" rx="9" ry="11" fill="white"/>
+  <ellipse cx="120" cy="135" rx="9" ry="11" fill="white"/>
+  <circle cx="86" cy="137" r="4" fill="#1f2937"/>
+  <circle cx="121" cy="137" r="4" fill="#1f2937"/>
+  <!-- sonrisa -->
+  <path d="M82 152 Q102 165 122 152" stroke="#1f2937" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+</svg>

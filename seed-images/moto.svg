@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fef3c7"/>
+  <!-- ruedas -->
+  <circle cx="50" cy="145" r="25" fill="#1f2937"/>
+  <circle cx="50" cy="145" r="14" fill="#6b7280"/>
+  <circle cx="50" cy="145" r="6" fill="#1f2937"/>
+  <circle cx="155" cy="145" r="25" fill="#1f2937"/>
+  <circle cx="155" cy="145" r="14" fill="#6b7280"/>
+  <circle cx="155" cy="145" r="6" fill="#1f2937"/>
+  <!-- cuerpo / tanque -->
+  <path d="M55 130 L75 115 L130 115 L150 130 Z" fill="#dc2626"/>
+  <!-- asiento -->
+  <path d="M75 115 L80 100 L130 100 L130 115 Z" fill="#1f2937"/>
+  <!-- manubrio -->
+  <path d="M140 100 L155 75 L170 80" stroke="#1f2937" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M155 75 L150 65" stroke="#1f2937" stroke-width="5" stroke-linecap="round"/>
+  <!-- faro -->
+  <circle cx="170" cy="85" r="8" fill="#fbbf24"/>
+  <!-- escape -->
+  <path d="M35 130 L18 140 Q12 145 18 150 L35 145" fill="#94a3b8" stroke="#1f2937" stroke-width="2"/>
+  <!-- detalles tanque -->
+  <line x1="100" y1="115" x2="100" y2="100" stroke="#7f1d1d" stroke-width="2"/>
+</svg>

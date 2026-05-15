@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fce7f3"/>
+  <circle cx="100" cy="100" r="65" fill="#ef4444" stroke="#7f1d1d" stroke-width="3"/>
+  <!-- cejas enojadas (V invertida) -->
+  <path d="M68 78 L92 88" stroke="#1f2937" stroke-width="7" stroke-linecap="round"/>
+  <path d="M132 78 L108 88" stroke="#1f2937" stroke-width="7" stroke-linecap="round"/>
+  <!-- ojos -->
+  <circle cx="80" cy="98" r="5" fill="#1f2937"/>
+  <circle cx="120" cy="98" r="5" fill="#1f2937"/>
+  <!-- boca enojada (curva hacia abajo) -->
+  <path d="M75 138 Q100 122 125 138" stroke="#1f2937" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- vapor de la cabeza -->
+  <path d="M55 50 Q50 40 60 35 Q70 30 65 22" stroke="#94a3b8" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M145 50 Q150 40 140 35 Q130 30 135 22" stroke="#94a3b8" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

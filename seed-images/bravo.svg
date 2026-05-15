@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fef3c7"/>
+  <!-- estrellas de festejo -->
+  <path d="M30 40 L34 50 L44 50 L36 56 L40 66 L30 60 L20 66 L24 56 L16 50 L26 50 Z" fill="#fbbf24"/>
+  <path d="M165 35 L168 43 L176 43 L170 48 L173 56 L165 51 L157 56 L160 48 L154 43 L162 43 Z" fill="#fbbf24"/>
+  <path d="M170 130 L173 138 L181 138 L175 143 L178 151 L170 146 L162 151 L165 143 L159 138 L167 138 Z" fill="#fbbf24"/>
+  <!-- mano izquierda -->
+  <path d="M55 90 Q50 80 60 75 L80 70 Q90 70 90 80 L88 110 Q88 130 75 138 Q60 142 50 130 L45 110 Q42 95 55 90 Z" fill="#fbbf24" stroke="#92400e" stroke-width="2.5"/>
+  <!-- mano derecha -->
+  <path d="M145 90 Q150 80 140 75 L120 70 Q110 70 110 80 L112 110 Q112 130 125 138 Q140 142 150 130 L155 110 Q158 95 145 90 Z" fill="#fbbf24" stroke="#92400e" stroke-width="2.5"/>
+  <!-- choque en el medio (lineas de impacto) -->
+  <path d="M100 95 L100 80 M85 100 L75 95 M115 100 L125 95 M100 115 L100 125 M88 115 L80 122 M112 115 L120 122" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+</svg>
