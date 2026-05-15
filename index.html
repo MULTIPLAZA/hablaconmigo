@@ -18,8 +18,11 @@
   <!-- VISTA MARIANO (uso del nino)   -->
   <!-- ============================== -->
   <main id="vista-mariano" class="vista vista-mariano activa" aria-label="Pantalla de comunicacion">
-    <!-- Zona invisible esquina superior izquierda para tap-largo y entrar a edicion -->
-    <div id="zona-edicion" class="zona-edicion" aria-hidden="true"></div>
+    <!-- Zona esquina superior izquierda: solo el circulito captura touch,
+         el resto del area deja pasar para no tapar el primer boton de Mariano -->
+    <div class="zona-edicion-wrap" aria-hidden="true">
+      <div id="zona-edicion" class="zona-edicion"></div>
+    </div>
 
     <div id="grilla-botones" class="grilla">
       <!-- los botones se inyectan desde app.js -->
