@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es-PY">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>HablaConmigo</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================== -->
+  <!-- VISTA MARIANO (uso del nino)   -->
+  <!-- ============================== -->
+  <main id="vista-mariano" class="vista vista-mariano activa" aria-label="Pantalla de comunicacion">
+    <!-- Zona invisible esquina superior izquierda para tap-largo y entrar a edicion -->
+    <div id="zona-edicion" class="zona-edicion" aria-hidden="true"></div>
+
+    <div id="grilla-botones" class="grilla">
+      <!-- los botones se inyectan desde app.js -->
+    </div>
+  </main>
+
+  <!-- ============================== -->
+  <!-- MODAL: PIN para entrar edicion -->
+  <!-- ============================== -->
+  <div id="modal-pin" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="titulo-pin">
+    <div class="modal-card">
+      <h2 id="titulo-pin">Ingresar PIN</h2>
+      <p class="muted">Solo para padres / cuidadores</p>
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="input-pin" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-action="cancelar-pin">Cancelar</button>
+        <button class="btn btn-primary" data-action="confirmar-pin">Entrar</button>
+      </div>
+      <p id="pin-error" class="error oculto">PIN incorrecto</p>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- VISTA EDICION (padre / madre)  -->
+  <!-- ============================== -->
+  <section id="vista-edicion" class="vista vista-edicion" aria-label="Panel de edicion">
+    <header class="edicion-header">
+      <div class="edicion-title">
+        <span class="logo-dot"></span>
+        <h1>HablaConmigo &mdash; Edicion</h1>
+      </div>
+      <button class="btn btn-primary btn-volver" data-action="volver-mariano">Volver a Mariano</button>
+    </header>
+
+    <div class="edicion-body">
+      <aside class="edicion-sidebar">
+        <h3>Configuracion</h3>
+
+        <label class="campo">
+          <span>Nivel</span>
+          <select id="select-nivel">
+            <option value="1">Nivel 1 &mdash; Arranque (4-6 botones)</option>
+            <option value="2">Nivel 2 &mdash; Crecimiento (9-12 botones)</option>
+            <option value="3">Nivel 3 &mdash; Categorias (proximamente)</option>
+            <option value="4">Nivel 4 &mdash; Frases (proximamente)</option>
+          </select>
+        </label>
+
+        <label class="campo">
+          <span>Columnas en la grilla</span>
+          <select id="select-columnas">
+            <option value="2">2 columnas</option>
+            <option value="3">3 columnas</option>
+            <option value="4">4 columnas</option>
+          </select>
+        </label>
+
+        <label class="campo">
+          <span>Voz TTS</span>
+          <select id="select-voz">
+            <option value="">(automatico - mejor disponible)</option>
+          </select>
+        </label>
+
+        <label class="campo">
+          <span>Velocidad de voz</span>
+          <input type="range" id="input-velocidad" min="0.6" max="1.2" step="0.05" value="0.9" />
+        </label>
+
+        <button class="btn btn-secondary btn-full" data-action="probar-voz">Probar voz</button>
+        <p class="muted-mini">Tip: para mejor voz, instala en Android "Servicios de Google para texto a voz" desde Play Store y elegi una voz <b>HD / Neural / Wavenet</b>.</p>
+
+        <hr />
+
+        <h3>Datos</h3>
+        <button class="btn btn-secondary btn-full" data-action="exportar-json">Exportar (JSON)</button>
+        <button class="btn btn-secondary btn-full" data-action="importar-json">Importar (JSON)</button>
+        <input type="file" id="input-importar" accept="application/json" hidden />
+
+        <hr />
+
+        <h3>Seguridad</h3>
+        <button class="btn btn-secondary btn-full" data-action="cambiar-pin">Cambiar PIN</button>
+      </aside>
+
+      <main class="edicion-main">
+        <div class="edicion-toolbar">
+          <h2>Botones</h2>
+          <div class="edicion-toolbar-actions">
+            <button class="btn btn-secondary" data-action="abrir-biblioteca">+ De biblioteca</button>
+            <button class="btn btn-primary" data-action="nuevo-boton">+ Nuevo boton</button>
+          </div>
+        </div>
+        <div id="lista-botones" class="lista-botones">
+          <!-- los botones editables se inyectan desde app.js -->
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ============================== -->
+  <!-- MODAL: Editor de boton          -->
+  <!-- ============================== -->
+  <div id="modal-boton" class="modal oculto" role="dialog" aria-modal="true">
+    <div class="modal-card modal-card-grande">
+      <h2 id="titulo-boton">Boton</h2>
+
+      <div class="campo">
+        <span>Palabra que dice (texto)</span>
+        <input type="text" id="input-palabra" maxlength="40" placeholder="Ej: agua" />
+      </div>
+
+      <div class="campo">
+        <span>Etiqueta visible (opcional)</span>
+        <input type="text" id="input-etiqueta" maxlength="20" placeholder="Si vacio usa la palabra" />
+      </div>
+
+      <div class="campo">
+        <span>Imagen</span>
+        <div class="imagen-preview">
+          <img id="img-preview" alt="" />
+          <div class="imagen-actions">
+            <label class="btn btn-secondary">
+              Galeria
+              <input type="file" id="input-imagen" accept="image/*" hidden />
+            </label>
+            <label class="btn btn-secondary">
+              Camara
+              <input type="file" id="input-camara" accept="image/*" capture="environment" hidden />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="campo">
+        <span>Audio personalizado (tu voz)</span>
+        <div class="audio-box">
+          <div class="audio-controls">
+            <button type="button" class="btn btn-primary" id="btn-grabar">Grabar</button>
+            <button type="button" class="btn btn-danger oculto" id="btn-detener">Detener</button>
+            <button type="button" class="btn btn-secondary oculto" id="btn-escuchar">Escuchar</button>
+            <button type="button" class="btn btn-secondary oculto" id="btn-borrar-audio">Borrar audio</button>
+          </div>
+          <p class="muted-mini" id="status-audio">Sin audio. Usara la voz del sistema (TTS).</p>
+        </div>
+      </div>
+
+      <div class="campo">
+        <span>Color de fondo</span>
+        <div class="colores">
+          <button type="button" class="color" style="background:#f0fdfa" data-color="#f0fdfa"></button>
+          <button type="button" class="color" style="background:#fef3c7" data-color="#fef3c7"></button>
+          <button type="button" class="color" style="background:#fce7f3" data-color="#fce7f3"></button>
+          <button type="button" class="color" style="background:#dbeafe" data-color="#dbeafe"></button>
+          <button type="button" class="color" style="background:#dcfce7" data-color="#dcfce7"></button>
+          <button type="button" class="color" style="background:#fee2e2" data-color="#fee2e2"></button>
+          <button type="button" class="color" style="background:#ede9fe" data-color="#ede9fe"></button>
+          <button type="button" class="color" style="background:#ffffff" data-color="#ffffff"></button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-danger" data-action="eliminar-boton">Eliminar</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-secondary" data-action="cancelar-boton">Cancelar</button>
+        <button class="btn btn-primary" data-action="guardar-boton">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- MODAL: Biblioteca de palabras   -->
+  <!-- ============================== -->
+  <div id="modal-biblioteca" class="modal oculto" role="dialog" aria-modal="true">
+    <div class="modal-card modal-card-xl">
+      <div class="bib-header">
+        <h2>Biblioteca de palabras</h2>
+        <button class="btn btn-secondary" data-action="cerrar-biblioteca">Cerrar</button>
+      </div>
+      <p class="muted">Toca una palabra para sumarla a la pantalla de Mariano.</p>
+      <div id="lista-biblioteca" class="lista-biblioteca"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast oculto"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

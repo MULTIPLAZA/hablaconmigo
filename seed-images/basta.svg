@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fee2e2"/>
+  <polygon points="100,30 138,50 158,90 158,140 130,170 70,170 42,140 42,90 62,50" fill="#dc2626" stroke="#7f1d1d" stroke-width="3"/>
+  <text x="100" y="118" text-anchor="middle" fill="white" font-size="44" font-weight="900" font-family="Arial">!</text>
+  <path d="M48 100 L152 100" stroke="white" stroke-width="6" opacity=".4"/>
+</svg>
