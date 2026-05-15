@@ -10,6 +10,7 @@
    --------------------------------------------------------- */
 const DB_NAME = 'hablaconmigo';
 const DB_VERSION = 2;
+const APP_VERSION = '2.1';
 const STORE_BOTONES = 'botones';
 const STORE_CONFIG = 'config';
 
@@ -17,26 +18,27 @@ const PIN_DEFAULT = '1234';
 const TAP_LARGO_MS = 5000;
 
 /* Biblioteca de palabras pre-armadas, agrupadas por categoria.
-   Estas plantillas se pueden importar al panel del nino con un click. */
+   IMPORTANTE: las palabras llevan tildes/enie para que el TTS pronuncie bien.
+   Los nombres de archivo SVG NO llevan tildes (mejor para URLs). */
 const BIBLIOTECA = [
   // basicas (las 6 originales)
-  { palabra: 'mama',      cat: 'basicas',     color: '#fce7f3', imagen: 'seed-images/mama.svg' },
-  { palabra: 'papa',      cat: 'basicas',     color: '#dbeafe', imagen: 'seed-images/papa.svg' },
+  { palabra: 'mamá',      cat: 'basicas',     color: '#fce7f3', imagen: 'seed-images/mama.svg' },
+  { palabra: 'papá',      cat: 'basicas',     color: '#dbeafe', imagen: 'seed-images/papa.svg' },
   { palabra: 'agua',      cat: 'basicas',     color: '#cffafe', imagen: 'seed-images/agua.svg' },
   { palabra: 'comer',     cat: 'basicas',     color: '#fef3c7', imagen: 'seed-images/comer.svg' },
-  { palabra: 'mas',       cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/mas.svg' },
+  { palabra: 'más',       cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/mas.svg' },
   { palabra: 'terminado', cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/terminado.svg' },
 
   // cosas
-  { palabra: 'biberon',   cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/biberon.svg' },
+  { palabra: 'biberón',   cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/biberon.svg' },
   { palabra: 'tele',      cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/tele.svg' },
   { palabra: 'cama',      cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/cama.svg' },
-  { palabra: 'sillon',    cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/sillon.svg' },
+  { palabra: 'sillón',    cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/sillon.svg' },
   { palabra: 'jugar',     cat: 'cosas',       color: '#fef3c7', imagen: 'seed-images/jugar.svg' },
 
   // acciones
   { palabra: 'dame',      cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/dame.svg' },
-  { palabra: 'mira',      cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/mira.svg' },
+  { palabra: 'mirá',      cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/mira.svg' },
   { palabra: 'abrir',     cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/abrir.svg' },
   { palabra: 'sacar',     cat: 'acciones',    color: '#dcfce7', imagen: 'seed-images/sacar.svg' },
 
@@ -48,16 +50,31 @@ const BIBLIOTECA = [
 
   // lugares
   { palabra: 'afuera',    cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/afuera.svg' },
-  { palabra: 'bano',      cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/bano.svg' },
+  { palabra: 'baño',      cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/bano.svg' },
   { palabra: 'cocina',    cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/cocina.svg' },
   { palabra: 'auto',      cat: 'lugares',     color: '#dbeafe', imagen: 'seed-images/auto.svg' },
 
   // nucleo
-  { palabra: 'si',        cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/si.svg' },
+  { palabra: 'sí',        cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/si.svg' },
   { palabra: 'no',        cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/no.svg' },
   { palabra: 'menos',     cat: 'nucleo',      color: '#fed7aa', imagen: 'seed-images/menos.svg' },
   { palabra: 'basta',     cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/basta.svg' },
 ];
+
+/* Migracion: palabras sin tilde -> con tilde.
+   Solo actualiza la palabra que se pronuncia (TTS); la imagen queda igual.
+   La etiqueta visible se mantiene tal cual la haya puesto el usuario,
+   a menos que coincida exactamente con la version sin tilde. */
+const MIGRACION_TILDES = {
+  'mama':    'mamá',
+  'papa':    'papá',
+  'biberon': 'biberón',
+  'sillon':  'sillón',
+  'mas':     'más',
+  'mira':    'mirá',
+  'si':      'sí',
+  'bano':    'baño',
+};
 
 const CATEGORIAS = [
   { id: 'basicas',      label: 'Basicas',      desc: 'Para empezar' },
@@ -200,6 +217,28 @@ async function seedSiHaceFalta() {
       nivel: 1,
     });
   }
+}
+
+/* Migracion idempotente: arregla acentos/enies en palabras seed
+   que se cargaron en versiones anteriores sin tildes. */
+async function migrarTildes() {
+  const yaMigrado = await dbGet(STORE_CONFIG, 'migrado_tildes_v21');
+  if (yaMigrado && yaMigrado.value) return;
+
+  const todos = await dbAll(STORE_BOTONES);
+  let cambios = 0;
+  for (const b of todos) {
+    const palabraNueva = MIGRACION_TILDES[(b.palabra || '').toLowerCase()];
+    if (!palabraNueva) continue;
+    // Si la etiqueta es igual a la palabra vieja, tambien la actualizo
+    const etiquetaIgual = (b.etiqueta || '').toLowerCase() === (b.palabra || '').toLowerCase();
+    b.palabra = palabraNueva;
+    if (etiquetaIgual) b.etiqueta = palabraNueva;
+    await dbPut(STORE_BOTONES, b);
+    cambios++;
+  }
+  await guardarConfig('migrado_tildes_v21', true);
+  if (cambios > 0) console.log(`[HablaConmigo] Migrados ${cambios} botones con tildes correctas`);
 }
 
 /* ---------------------------------------------------------
@@ -880,6 +919,7 @@ async function init() {
     State.db = await openDB();
     await cargarConfig();
     await seedSiHaceFalta();
+    await migrarTildes();
     bindEventos();
     await mostrarVista('mariano');
     registrarSW();
