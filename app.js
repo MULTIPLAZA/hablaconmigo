@@ -86,13 +86,17 @@ const MIGRACION_TILDES = {
 };
 
 const CATEGORIAS = [
-  { id: 'basicas',      label: 'Basicas',      desc: 'Para empezar' },
-  { id: 'cosas',        label: 'Cosas',        desc: 'Objetos del dia a dia' },
-  { id: 'acciones',     label: 'Acciones',     desc: 'Verbos clave' },
-  { id: 'sentimientos', label: 'Sentimientos', desc: 'Como me siento' },
-  { id: 'lugares',      label: 'Lugares',      desc: 'A donde voy' },
-  { id: 'nucleo',       label: 'Nucleo',       desc: 'Palabras pegamento' },
+  { id: 'basicas',      label: 'Basicas',      desc: 'Para empezar',           icono: '⭐', color: '#fde68a' },
+  { id: 'cosas',        label: 'Cosas',        desc: 'Objetos del dia a dia',  icono: '📦', color: '#fef3c7' },
+  { id: 'acciones',     label: 'Acciones',     desc: 'Verbos clave',            icono: '🎬', color: '#dcfce7' },
+  { id: 'sentimientos', label: 'Sentimientos', desc: 'Como me siento',         icono: '❤️', color: '#fce7f3' },
+  { id: 'lugares',      label: 'Lugares',      desc: 'A donde voy',             icono: '🏠', color: '#dbeafe' },
+  { id: 'nucleo',       label: 'Nucleo',       desc: 'Palabras pegamento',     icono: '💬', color: '#e9d5ff' },
 ];
+
+// Categorias especiales para la vista Mariano (no estan en biblioteca)
+const CAT_TODAS = { id: 'todas', label: 'Todas', icono: '✨', color: '#ccfbf1' };
+const CAT_MIS   = { id: 'mis',   label: 'Mias',  icono: '👤', color: '#fed7aa' };
 
 const SEED_BOTONES = BIBLIOTECA.filter(b => b.cat === 'basicas' || b.palabra === 'mas' || b.palabra === 'terminado');
 
@@ -108,7 +112,9 @@ const State = {
     nivel: 1,
     velocidad: 0.9,
     voz: '',
+    pestanas: 'auto', // 'auto' | 'si' | 'no'
   },
+  categoriaActiva: 'todas',
   vozActual: null,
   vocesDisponibles: [],
   botonEnEdicion: null,
@@ -186,7 +192,7 @@ function dbGet(storeName, key) {
    Config helpers
    --------------------------------------------------------- */
 async function cargarConfig() {
-  const keys = ['pin', 'columnas', 'nivel', 'velocidad', 'voz'];
+  const keys = ['pin', 'columnas', 'nivel', 'velocidad', 'voz', 'pestanas'];
   for (const k of keys) {
     const v = await dbGet(STORE_CONFIG, k);
     if (v && v.value !== undefined) State.config[k] = v.value;
@@ -224,8 +230,29 @@ async function seedSiHaceFalta() {
       color: seed.color,
       orden: i,
       nivel: 1,
+      categoria: seed.cat || 'basicas',
     });
   }
+}
+
+/* Migracion idempotente: asigna categoria a botones que aun no la tienen.
+   Si la palabra existe en la biblioteca, usa esa categoria. Si no, 'mis'. */
+async function migrarCategorias() {
+  const yaMigrado = await dbGet(STORE_CONFIG, 'migrado_categorias_v3');
+  if (yaMigrado && yaMigrado.value) return;
+
+  const todos = await dbAll(STORE_BOTONES);
+  let cambios = 0;
+  for (const b of todos) {
+    if (b.categoria) continue;
+    const palabraLower = (b.palabra || '').toLowerCase();
+    const enBib = BIBLIOTECA.find(x => x.palabra.toLowerCase() === palabraLower);
+    b.categoria = enBib ? enBib.cat : 'mis';
+    await dbPut(STORE_BOTONES, b);
+    cambios++;
+  }
+  await guardarConfig('migrado_categorias_v3', true);
+  if (cambios > 0) console.log(`[HablaConmigo] Migrados ${cambios} botones con categoria`);
 }
 
 /* Migracion idempotente: arregla acentos/enies en palabras seed
@@ -354,10 +381,12 @@ function reproducirBoton(b) {
 function calcularGridOptimo(n) {
   if (n <= 0) return { cols: 2, aspect: '1 / 1' };
 
+  const wrap = document.getElementById('grilla-wrap');
   const vista = document.getElementById('vista-mariano');
-  const padding = 20;
-  const ancho = (vista.clientWidth || window.innerWidth) - padding;
-  const alto = (vista.clientHeight || window.innerHeight) - padding;
+  const padding = 16;
+  // espacio real de la grilla descontando barra de pestanas si existe
+  const ancho = ((wrap && wrap.clientWidth) || vista.clientWidth || window.innerWidth) - padding;
+  const alto = ((wrap && wrap.clientHeight) || vista.clientHeight || window.innerHeight) - padding;
   const gap = 8;
 
   // tamano minimo tactil aceptable: ~64px (recomendacion AAC infantil)
@@ -422,17 +451,92 @@ function calcularGridOptimo(n) {
   return mejor;
 }
 
+/* Decide si mostrar pestanas segun config + cantidad de botones */
+function debeMostrarPestanas() {
+  const cfg = State.config.pestanas;
+  if (cfg === 'no') return false;
+  if (cfg === 'si') return true;
+  // auto: mostrar si hay mas de 12 botones y al menos 2 categorias con contenido
+  if (State.botones.length <= 12) return false;
+  const cats = new Set(State.botones.map(b => b.categoria || 'mis'));
+  return cats.size >= 2;
+}
+
+/* Devuelve las categorias visibles (las que tienen al menos 1 boton)
+   mas la pestana "Todas" al inicio */
+function categoriasVisibles() {
+  const cuenta = {};
+  for (const b of State.botones) {
+    const c = b.categoria || 'mis';
+    cuenta[c] = (cuenta[c] || 0) + 1;
+  }
+  const lista = [CAT_TODAS];
+  // primero las predefinidas en orden, luego "mis" al final si tiene
+  for (const c of CATEGORIAS) {
+    if (cuenta[c.id]) lista.push(c);
+  }
+  if (cuenta['mis']) lista.push(CAT_MIS);
+  return lista;
+}
+
+function renderPestanas() {
+  const bar = document.getElementById('pestanas-bar');
+  const cont = document.getElementById('pestanas-scroll');
+  if (!bar || !cont) return;
+
+  if (!debeMostrarPestanas()) {
+    bar.classList.add('oculto');
+    State.categoriaActiva = 'todas';
+    return;
+  }
+
+  bar.classList.remove('oculto');
+  cont.innerHTML = '';
+
+  const cats = categoriasVisibles();
+  // si la categoria activa no esta en la lista, volver a "todas"
+  if (!cats.some(c => c.id === State.categoriaActiva)) State.categoriaActiva = 'todas';
+
+  for (const cat of cats) {
+    const tab = document.createElement('button');
+    tab.className = 'pestana';
+    tab.dataset.cat = cat.id;
+    if (cat.id === State.categoriaActiva) tab.classList.add('activa');
+    tab.style.setProperty('--cat-color', cat.color);
+    tab.innerHTML = `
+      <span class="pestana-icono">${cat.icono}</span>
+      <span class="pestana-label">${cat.label}</span>
+    `;
+    tab.addEventListener('click', () => {
+      State.categoriaActiva = cat.id;
+      renderMariano();
+    });
+    cont.appendChild(tab);
+  }
+}
+
 async function renderMariano() {
   State.botones = await dbAll(STORE_BOTONES);
   State.botones.sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
+  renderPestanas();
+
+  // filtrar por categoria activa
+  let botonesVisibles = State.botones;
+  if (debeMostrarPestanas() && State.categoriaActiva && State.categoriaActiva !== 'todas') {
+    botonesVisibles = State.botones.filter(b => (b.categoria || 'mis') === State.categoriaActiva);
+  }
+
   const grilla = document.getElementById('grilla-botones');
   grilla.innerHTML = '';
+
+  // dar tiempo al layout para calcular tamano del wrap (post pestanas)
+  await new Promise(r => requestAnimationFrame(r));
 
   // decide columnas y aspecto
   const cfg = State.config.columnas;
   if (cfg === 'auto' || !cfg) {
-    const opt = calcularGridOptimo(State.botones.length);
+    const opt = calcularGridOptimo(botonesVisibles.length);
     grilla.style.setProperty('--cols', opt.cols);
     grilla.style.setProperty('--boton-aspect', opt.aspect);
   } else {
@@ -440,7 +544,7 @@ async function renderMariano() {
     grilla.style.setProperty('--boton-aspect', '1 / 1');
   }
 
-  for (const b of State.botones) {
+  for (const b of botonesVisibles) {
     const el = document.createElement('div');
     el.className = 'boton-tap';
     el.style.background = b.color || '#ffffff';
@@ -484,6 +588,8 @@ async function renderEdicion() {
   const colsVal = State.config.columnas === 'auto' || !State.config.columnas ? 'auto' : String(State.config.columnas);
   document.getElementById('select-columnas').value = colsVal;
   document.getElementById('input-velocidad').value = String(State.config.velocidad);
+  const selPest = document.getElementById('select-pestanas');
+  if (selPest) selPest.value = State.config.pestanas || 'auto';
 
   State.botones = await dbAll(STORE_BOTONES);
   State.botones.sort((a, b) => (a.orden || 0) - (b.orden || 0));
@@ -590,6 +696,11 @@ function abrirEditorBoton(boton) {
   document.getElementById('titulo-boton').textContent = boton ? 'Editar boton' : 'Nuevo boton';
   document.getElementById('input-palabra').value = boton ? (boton.palabra || '') : '';
   document.getElementById('input-etiqueta').value = boton ? (boton.etiqueta || '') : '';
+
+  // categoria
+  const selCat = document.getElementById('select-categoria-boton');
+  if (selCat) selCat.value = (boton && boton.categoria) || 'mis';
+
   const img = document.getElementById('img-preview');
   img.src = State.imagenTemp || 'icons/icon-192.svg';
 
@@ -616,6 +727,8 @@ function cerrarEditorBoton() {
 async function guardarBoton() {
   const palabra = document.getElementById('input-palabra').value.trim();
   const etiqueta = document.getElementById('input-etiqueta').value.trim();
+  const selCat = document.getElementById('select-categoria-boton');
+  const categoria = (selCat && selCat.value) || 'mis';
   if (!palabra) { toast('La palabra no puede estar vacia'); return; }
   if (!State.imagenTemp) { toast('Falta la imagen'); return; }
 
@@ -628,6 +741,7 @@ async function guardarBoton() {
     audio: State.audioTemp,
     color: State.colorTemp,
     nivel: ahora.nivel || State.config.nivel,
+    categoria,
   };
   if (obj.orden === undefined) obj.orden = State.botones.length;
   await dbPut(STORE_BOTONES, obj);
@@ -818,6 +932,7 @@ function renderBiblioteca() {
           color: it.color,
           orden,
           nivel: State.config.nivel,
+          categoria: it.cat || 'mis',
         });
         await renderEdicion();
         renderBiblioteca();
@@ -961,6 +1076,12 @@ function bindEventos() {
     const v = e.target.value;
     await guardarConfig('columnas', v === 'auto' ? 'auto' : parseInt(v, 10));
   });
+  const selPest = document.getElementById('select-pestanas');
+  if (selPest) {
+    selPest.addEventListener('change', async (e) => {
+      await guardarConfig('pestanas', e.target.value);
+    });
+  }
   document.getElementById('select-voz').addEventListener('change', async (e) => {
     await guardarConfig('voz', e.target.value);
     cargarVoces();
@@ -1035,6 +1156,7 @@ async function init() {
     await cargarConfig();
     await seedSiHaceFalta();
     await migrarTildes();
+    await migrarCategorias();
     bindEventos();
     await mostrarVista('mariano');
     registrarSW();

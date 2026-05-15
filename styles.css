@@ -54,7 +54,79 @@ body {
 
 .vista-mariano {
   background: linear-gradient(180deg, var(--primary-light) 0%, #ffffff 100%);
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Barra de pestanas (categorias) */
+.pestanas-bar {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, .7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 4px 6px 56px; /* margen izq para no chocar con la zona-edicion */
+}
+
+.pestanas-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pestanas-scroll::-webkit-scrollbar { display: none; }
+
+.pestana {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 6px 10px;
+  min-width: 64px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .08s ease, border-color .12s ease, background .12s ease;
+}
+
+.pestana:active {
+  transform: scale(.94);
+}
+
+.pestana-icono {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.pestana-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: lowercase;
+}
+
+.pestana.activa {
+  background: var(--cat-color, var(--primary-light));
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.pestana.activa .pestana-label {
+  color: var(--primary-dark);
+}
+
+/* Wrap de la grilla: contiene scroll y centra cuando sobra espacio */
+.grilla-wrap {
+  flex: 1;
+  min-height: 0;
+  padding: 10px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   display: flex;

@@ -24,8 +24,16 @@
       <div id="zona-edicion" class="zona-edicion"></div>
     </div>
 
-    <div id="grilla-botones" class="grilla">
-      <!-- los botones se inyectan desde app.js -->
+    <!-- Barra de pestanas (categorias). Se oculta si hay pocos botones -->
+    <div id="pestanas-bar" class="pestanas-bar oculto" aria-label="Categorias">
+      <div id="pestanas-scroll" class="pestanas-scroll"></div>
+    </div>
+
+    <!-- Wrap de la grilla (para que el algoritmo auto mida bien el alto disponible) -->
+    <div id="grilla-wrap" class="grilla-wrap">
+      <div id="grilla-botones" class="grilla">
+        <!-- los botones se inyectan desde app.js -->
+      </div>
     </div>
   </main>
 
@@ -69,6 +77,16 @@
             <option value="3">Nivel 3 &mdash; Categorias (proximamente)</option>
             <option value="4">Nivel 4 &mdash; Frases (proximamente)</option>
           </select>
+        </label>
+
+        <label class="campo">
+          <span>Pestanas por categoria</span>
+          <select id="select-pestanas">
+            <option value="auto">Automatico (cuando hay muchos botones)</option>
+            <option value="si">Siempre mostrar</option>
+            <option value="no">Nunca - todo en una sola pantalla</option>
+          </select>
+          <p class="muted-mini">Las pestanas agrupan los botones por categoria. Recomendado para 12+ palabras.</p>
         </label>
 
         <label class="campo">
@@ -144,6 +162,19 @@
       <div class="campo">
         <span>Etiqueta visible (opcional)</span>
         <input type="text" id="input-etiqueta" maxlength="20" placeholder="Si vacio usa la palabra" />
+      </div>
+
+      <div class="campo">
+        <span>Categoria (pestana)</span>
+        <select id="select-categoria-boton">
+          <option value="mis">👤 Mias</option>
+          <option value="basicas">⭐ Basicas</option>
+          <option value="cosas">📦 Cosas</option>
+          <option value="acciones">🎬 Acciones</option>
+          <option value="sentimientos">❤️ Sentimientos</option>
+          <option value="lugares">🏠 Lugares</option>
+          <option value="nucleo">💬 Nucleo</option>
+        </select>
       </div>
 
       <div class="campo">
