@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fee2e2"/>
+  <!-- pulgar abajo -->
+  <!-- manga arriba -->
+  <rect x="50" y="20" width="100" height="50" rx="6" fill="#7f1d1d"/>
+  <!-- palma -->
+  <path d="M55 95 Q55 110 70 110 L130 110 Q150 110 150 95 L150 62 L55 62 Z" fill="#fde68a" stroke="#92400e" stroke-width="2.5"/>
+  <!-- pulgar abajo -->
+  <path d="M85 110 L85 160 Q85 172 100 172 Q115 172 115 160 L115 110 Z" fill="#fde68a" stroke="#92400e" stroke-width="2.5"/>
+  <!-- una de pulgar -->
+  <ellipse cx="100" cy="165" rx="10" ry="4" fill="#fbbf24"/>
+  <!-- detalles de dedos -->
+  <line x1="70" y1="62" x2="70" y2="95" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="90" y1="62" x2="90" y2="95" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="110" y1="62" x2="110" y2="95" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="130" y1="62" x2="130" y2="95" stroke="#92400e" stroke-width="1.5"/>
+  <!-- X de desaprobacion -->
+  <circle cx="165" cy="150" r="14" fill="#dc2626"/>
+  <line x1="158" y1="143" x2="172" y2="157" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <line x1="172" y1="143" x2="158" y2="157" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>

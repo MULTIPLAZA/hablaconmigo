@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#dcfce7"/>
+  <!-- pulgar arriba -->
+  <!-- manga -->
+  <rect x="50" y="135" width="100" height="50" rx="6" fill="#1d4ed8"/>
+  <!-- palma cerrada -->
+  <path d="M55 105 Q55 90 70 90 L130 90 Q150 90 150 105 L150 138 L55 138 Z" fill="#fde68a" stroke="#92400e" stroke-width="2.5"/>
+  <!-- pulgar arriba -->
+  <path d="M85 90 L85 40 Q85 28 100 28 Q115 28 115 40 L115 90 Z" fill="#fde68a" stroke="#92400e" stroke-width="2.5"/>
+  <!-- una de pulgar -->
+  <ellipse cx="100" cy="35" rx="10" ry="4" fill="#fbbf24"/>
+  <!-- detalles de dedos en palma -->
+  <line x1="70" y1="105" x2="70" y2="138" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="90" y1="105" x2="90" y2="138" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="110" y1="105" x2="110" y2="138" stroke="#92400e" stroke-width="1.5"/>
+  <line x1="130" y1="105" x2="130" y2="138" stroke="#92400e" stroke-width="1.5"/>
+  <!-- estrella de aprobacion -->
+  <path d="M165 50 L168 58 L176 58 L170 63 L173 71 L165 66 L157 71 L160 63 L154 58 L162 58 Z" fill="#22c55e"/>
+</svg>

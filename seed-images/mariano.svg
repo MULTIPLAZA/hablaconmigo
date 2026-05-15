@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#fef3c7"/>
+  <!-- cara de nino -->
+  <circle cx="100" cy="95" r="42" fill="#fde68a"/>
+  <!-- pelo -->
+  <path d="M60 80 Q60 50 100 50 Q140 50 140 80 Q140 70 130 70 Q120 65 110 70 Q100 65 90 70 Q80 65 70 70 Q60 70 60 80 Z" fill="#78350f"/>
+  <!-- ojos -->
+  <circle cx="86" cy="95" r="5" fill="#1f2937"/>
+  <circle cx="114" cy="95" r="5" fill="#1f2937"/>
+  <circle cx="87" cy="93" r="1.5" fill="white"/>
+  <circle cx="115" cy="93" r="1.5" fill="white"/>
+  <!-- mejillas -->
+  <circle cx="74" cy="108" r="6" fill="#fca5a5" opacity=".6"/>
+  <circle cx="126" cy="108" r="6" fill="#fca5a5" opacity=".6"/>
+  <!-- sonrisa -->
+  <path d="M85 118 Q100 130 115 118" stroke="#1f2937" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- cuerpito -->
+  <path d="M55 195 L55 165 Q55 145 100 145 Q145 145 145 165 L145 195 Z" fill="#3b82f6"/>
+  <!-- letra M en el cuerpito -->
+  <text x="100" y="180" text-anchor="middle" fill="white" font-size="26" font-weight="900" font-family="Arial">M</text>
+</svg>

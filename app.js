@@ -24,6 +24,7 @@ const BIBLIOTECA = [
   // basicas (las 6 originales)
   { palabra: 'mamá',      cat: 'basicas',     color: '#fce7f3', imagen: 'seed-images/mama.svg' },
   { palabra: 'papá',      cat: 'basicas',     color: '#dbeafe', imagen: 'seed-images/papa.svg' },
+  { palabra: 'Mariano',   cat: 'basicas',     color: '#fef3c7', imagen: 'seed-images/mariano.svg' },
   { palabra: 'agua',      cat: 'basicas',     color: '#cffafe', imagen: 'seed-images/agua.svg' },
   { palabra: 'comer',     cat: 'basicas',     color: '#fef3c7', imagen: 'seed-images/comer.svg' },
   { palabra: 'más',       cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/mas.svg' },
@@ -50,6 +51,7 @@ const BIBLIOTECA = [
   { palabra: 'duele',        cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/duele.svg' },
   { palabra: 'miedo',        cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/miedo.svg' },
   { palabra: 'enojado',      cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/enojado.svg' },
+  { palabra: 'te amo',       cat: 'sentimientos', color: '#fce7f3', imagen: 'seed-images/te-amo.svg' },
   { palabra: 'bravo Mariano', etiqueta: 'bravo', cat: 'sentimientos', color: '#fef3c7', imagen: 'seed-images/bravo.svg' },
 
   // lugares
@@ -61,8 +63,11 @@ const BIBLIOTECA = [
   // nucleo
   { palabra: 'sí',        cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/si.svg' },
   { palabra: 'no',        cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/no.svg' },
+  { palabra: 'bueno',     cat: 'nucleo',      color: '#dcfce7', imagen: 'seed-images/bueno.svg' },
+  { palabra: 'malo',      cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/malo.svg' },
   { palabra: 'menos',     cat: 'nucleo',      color: '#fed7aa', imagen: 'seed-images/menos.svg' },
   { palabra: 'basta',     cat: 'nucleo',      color: '#fee2e2', imagen: 'seed-images/basta.svg' },
+  { palabra: 'portate bien', etiqueta: 'portate bien', cat: 'nucleo', color: '#dcfce7', imagen: 'seed-images/portate-bien.svg' },
 ];
 
 /* Migracion: palabras sin tilde -> con tilde.

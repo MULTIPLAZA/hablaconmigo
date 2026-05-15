@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#dcfce7"/>
+  <!-- silla -->
+  <rect x="60" y="155" width="80" height="20" rx="3" fill="#92400e"/>
+  <rect x="62" y="170" width="8" height="20" fill="#78350f"/>
+  <rect x="130" y="170" width="8" height="20" fill="#78350f"/>
+  <rect x="135" y="115" width="8" height="55" fill="#92400e"/>
+  <!-- niño sentado quietito -->
+  <circle cx="100" cy="65" r="28" fill="#fde68a" stroke="#92400e" stroke-width="2"/>
+  <!-- pelo -->
+  <path d="M75 60 Q75 40 100 40 Q125 40 125 60 Q125 52 117 52 Q108 48 100 50 Q92 48 83 52 Q75 52 75 60 Z" fill="#78350f"/>
+  <!-- ojos cerrados / serenos -->
+  <path d="M88 68 Q92 70 96 68" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M104 68 Q108 70 112 68" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- sonrisa suave -->
+  <path d="M93 80 Q100 84 107 80" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- cuerpo sentado -->
+  <path d="M75 100 Q75 90 100 90 Q125 90 125 100 L130 155 L70 155 Z" fill="#3b82f6"/>
+  <!-- manos cruzadas -->
+  <ellipse cx="88" cy="135" rx="10" ry="7" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+  <ellipse cx="112" cy="135" rx="10" ry="7" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+  <!-- check de aprobacion -->
+  <circle cx="170" cy="40" r="16" fill="#22c55e"/>
+  <path d="M162 40 L168 47 L178 33" stroke="white" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

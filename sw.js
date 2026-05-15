@@ -4,7 +4,7 @@
    cache-first para imagenes y assets estaticos
    ========================================================= */
 
-const CACHE_NAME = 'hablaconmigo-v9';
+const CACHE_NAME = 'hablaconmigo-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -44,6 +44,11 @@ const ASSETS = [
   './seed-images/enojado.svg',
   './seed-images/caca.svg',
   './seed-images/moto.svg',
+  './seed-images/te-amo.svg',
+  './seed-images/mariano.svg',
+  './seed-images/bueno.svg',
+  './seed-images/malo.svg',
+  './seed-images/portate-bien.svg',
 ];
 
 self.addEventListener('install', (event) => {
