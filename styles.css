@@ -121,13 +121,13 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 10px;
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: transform .08s ease, box-shadow .08s ease;
   overflow: hidden;
-  gap: 8px;
-  aspect-ratio: 1 / 1;
+  gap: 6px;
+  aspect-ratio: var(--boton-aspect, 1 / 1);
   min-height: 0;
 }
 
@@ -696,16 +696,18 @@ body {
 }
 
 /* =========================================================
-   Responsive: celular vertical
+   Responsive
    ========================================================= */
 @media (max-width: 600px) {
-  /* en celular vertical, forzar 2 columnas para que los botones
-     no queden ni muy chicos ni muy estirados */
-  .grilla { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
   .vista-mariano { padding: 8px; }
+  .grilla { gap: 8px; }
 
+  .boton-tap {
+    padding: 6px;
+    gap: 4px;
+  }
   .boton-tap .etiqueta {
-    font-size: clamp(20px, 7vw, 32px);
+    font-size: clamp(14px, 4.5vw, 22px);
   }
 
   .edicion-body {
@@ -728,19 +730,8 @@ body {
   }
 }
 
-/* celular horizontal: 3 columnas, botones mas chatos pero todavia cuadrados */
-@media (max-width: 900px) and (orientation: landscape) {
-  .grilla { grid-template-columns: repeat(3, 1fr) !important; }
-}
-
-/* tablet horizontal: que la grilla aproveche todo */
+/* tablet horizontal: aprovechar mejor */
 @media (min-width: 900px) and (orientation: landscape) {
   .vista-mariano { padding: 16px; }
   .grilla { gap: 16px; }
-}
-
-/* tablet vertical o pantalla muy alta: limitar ancho de la grilla
-   para que los botones cuadrados no se hagan gigantes */
-@media (min-width: 601px) and (orientation: portrait) {
-  .grilla { max-width: 720px; }
 }

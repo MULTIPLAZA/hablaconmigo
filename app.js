@@ -95,7 +95,7 @@ const State = {
   botones: [],
   config: {
     pin: PIN_DEFAULT,
-    columnas: 3,
+    columnas: 'auto',
     nivel: 1,
     velocidad: 0.9,
     voz: '',
@@ -339,13 +339,70 @@ function reproducirBoton(b) {
 /* ---------------------------------------------------------
    Render: vista Mariano
    --------------------------------------------------------- */
+/* Calcula la mejor distribucion (columnas y aspect-ratio del boton)
+   para que N botones entren en la pantalla disponible sin scroll. */
+function calcularGridOptimo(n) {
+  if (n <= 0) return { cols: 2, aspect: '1 / 1' };
+
+  // medidas del area disponible (vista-mariano menos padding)
+  const vista = document.getElementById('vista-mariano');
+  const padding = 24; // 12 arriba + 12 abajo aprox
+  const ancho = (vista.clientWidth || window.innerWidth) - padding;
+  const alto = (vista.clientHeight || window.innerHeight) - padding;
+  const gap = 10;
+
+  let mejor = { cols: 2, aspect: '1 / 1', tam: 0 };
+
+  // probar de 2 a 6 columnas, elegir la que de el boton mas grande
+  // sin desproporciones extremas
+  for (let c = 2; c <= 6; c++) {
+    const filas = Math.ceil(n / c);
+    const w = (ancho - gap * (c - 1)) / c;
+    const h = (alto - gap * (filas - 1)) / filas;
+
+    if (w < 60 || h < 50) continue;
+
+    // ratio rectangular maximo permitido (no botones muy estirados)
+    const ratio = Math.max(w, h) / Math.min(w, h);
+    if (ratio > 1.8) continue;
+
+    // puntaje: area del boton (mas grande mejor)
+    const tam = w * h;
+    if (tam > mejor.tam) {
+      mejor = { cols: c, aspect: `${w.toFixed(1)} / ${h.toFixed(1)}`, tam };
+    }
+  }
+
+  // si nada paso el filtro (muchos botones en poco espacio),
+  // forzar 4 columnas con aspect natural y permitir scroll
+  if (mejor.tam === 0) {
+    const c = 4;
+    const filas = Math.ceil(n / c);
+    const w = (ancho - gap * (c - 1)) / c;
+    const h = Math.max(70, w * 0.8);
+    mejor = { cols: c, aspect: `${w.toFixed(1)} / ${h.toFixed(1)}`, tam: w * h };
+  }
+
+  return mejor;
+}
+
 async function renderMariano() {
   State.botones = await dbAll(STORE_BOTONES);
   State.botones.sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
   const grilla = document.getElementById('grilla-botones');
   grilla.innerHTML = '';
-  grilla.style.setProperty('--cols', State.config.columnas);
+
+  // decide columnas y aspecto
+  const cfg = State.config.columnas;
+  if (cfg === 'auto' || !cfg) {
+    const opt = calcularGridOptimo(State.botones.length);
+    grilla.style.setProperty('--cols', opt.cols);
+    grilla.style.setProperty('--boton-aspect', opt.aspect);
+  } else {
+    grilla.style.setProperty('--cols', cfg);
+    grilla.style.setProperty('--boton-aspect', '1 / 1');
+  }
 
   for (const b of State.botones) {
     const el = document.createElement('div');
@@ -388,7 +445,8 @@ async function renderMariano() {
    --------------------------------------------------------- */
 async function renderEdicion() {
   document.getElementById('select-nivel').value = String(State.config.nivel);
-  document.getElementById('select-columnas').value = String(State.config.columnas);
+  const colsVal = State.config.columnas === 'auto' || !State.config.columnas ? 'auto' : String(State.config.columnas);
+  document.getElementById('select-columnas').value = colsVal;
   document.getElementById('input-velocidad').value = String(State.config.velocidad);
 
   State.botones = await dbAll(STORE_BOTONES);
@@ -864,7 +922,8 @@ function bindEventos() {
     await guardarConfig('nivel', parseInt(e.target.value, 10));
   });
   document.getElementById('select-columnas').addEventListener('change', async (e) => {
-    await guardarConfig('columnas', parseInt(e.target.value, 10));
+    const v = e.target.value;
+    await guardarConfig('columnas', v === 'auto' ? 'auto' : parseInt(v, 10));
   });
   document.getElementById('select-voz').addEventListener('change', async (e) => {
     await guardarConfig('voz', e.target.value);
@@ -900,6 +959,24 @@ function bindEventos() {
     cargarVoces();
     speechSynthesis.onvoiceschanged = cargarVoces;
   }
+
+  // Re-render al cambiar orientacion o tamano (modo auto recalcula)
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (document.getElementById('vista-mariano').classList.contains('activa')) {
+        renderMariano();
+      }
+    }, 200);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      if (document.getElementById('vista-mariano').classList.contains('activa')) {
+        renderMariano();
+      }
+    }, 300);
+  });
 }
 
 /* ---------------------------------------------------------
