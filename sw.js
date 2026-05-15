@@ -4,7 +4,7 @@
    cache-first para imagenes y assets estaticos
    ========================================================= */
 
-const CACHE_NAME = 'hablaconmigo-v10';
+const CACHE_NAME = 'hablaconmigo-v11';
 const ASSETS = [
   './',
   './index.html',

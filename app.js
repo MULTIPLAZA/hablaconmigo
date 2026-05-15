@@ -349,47 +349,74 @@ function reproducirBoton(b) {
    Render: vista Mariano
    --------------------------------------------------------- */
 /* Calcula la mejor distribucion (columnas y aspect-ratio del boton)
-   para que N botones entren en la pantalla disponible sin scroll. */
+   para que N botones entren en la pantalla. Si caben todos sin scroll, los maximiza.
+   Si son demasiados, permite scroll pero mantiene botones legibles y proporcionados. */
 function calcularGridOptimo(n) {
   if (n <= 0) return { cols: 2, aspect: '1 / 1' };
 
-  // medidas del area disponible (vista-mariano menos padding)
   const vista = document.getElementById('vista-mariano');
-  const padding = 24; // 12 arriba + 12 abajo aprox
+  const padding = 20;
   const ancho = (vista.clientWidth || window.innerWidth) - padding;
   const alto = (vista.clientHeight || window.innerHeight) - padding;
-  const gap = 10;
+  const gap = 8;
 
-  let mejor = { cols: 2, aspect: '1 / 1', tam: 0 };
+  // tamano minimo tactil aceptable: ~64px (recomendacion AAC infantil)
+  const TAM_MIN = 64;
 
-  // probar de 2 a 6 columnas, elegir la que de el boton mas grande
-  // sin desproporciones extremas
-  for (let c = 2; c <= 6; c++) {
+  let mejor = { cols: 3, aspect: '1 / 1', score: -Infinity };
+
+  for (let c = 2; c <= 8; c++) {
     const filas = Math.ceil(n / c);
     const w = (ancho - gap * (c - 1)) / c;
-    const h = (alto - gap * (filas - 1)) / filas;
 
-    if (w < 60 || h < 50) continue;
+    // si los botones son muy estrechos en X, descarto
+    if (w < TAM_MIN) continue;
 
-    // ratio rectangular maximo permitido (no botones muy estirados)
+    // alto necesario para botones cuadrados
+    const altoCuadrado = filas * w + gap * (filas - 1);
+
+    let h;
+    let scrolling = false;
+
+    if (altoCuadrado <= alto) {
+      // entran cuadrados sin scroll
+      h = w;
+    } else {
+      // no entran cuadrados sin scroll
+      // pruebo aplastar un poco para que entren (hasta 1.4:1)
+      const hAplastado = (alto - gap * (filas - 1)) / filas;
+      if (hAplastado >= w / 1.4) {
+        // aplastando entran y mantienen proporcion decente
+        h = hAplastado;
+      } else {
+        // aceptamos que haya scroll: dejamos cuadrados
+        h = w;
+        scrolling = true;
+      }
+    }
+
+    if (h < TAM_MIN * 0.7) continue; // demasiado chato
+
     const ratio = Math.max(w, h) / Math.min(w, h);
-    if (ratio > 1.8) continue;
-
-    // puntaje: area del boton (mas grande mejor)
     const tam = w * h;
-    if (tam > mejor.tam) {
-      mejor = { cols: c, aspect: `${w.toFixed(1)} / ${h.toFixed(1)}`, tam };
+
+    // score: priorizamos tamano grande, penalizamos scroll un poco
+    // y penalizamos desproporcion fuerte
+    let score = tam;
+    if (scrolling) score *= 0.75;
+    if (ratio > 1.3) score *= (1.3 / ratio);
+
+    if (score > mejor.score) {
+      mejor = { cols: c, aspect: `${w.toFixed(1)} / ${h.toFixed(1)}`, score };
     }
   }
 
-  // si nada paso el filtro (muchos botones en poco espacio),
-  // forzar 4 columnas con aspect natural y permitir scroll
-  if (mejor.tam === 0) {
-    const c = 4;
-    const filas = Math.ceil(n / c);
+  // fallback: si nada paso filtros (pantalla muy chica o muchos botones extremos),
+  // usar raiz cuadrada del N como base
+  if (mejor.score === -Infinity) {
+    const c = Math.max(2, Math.min(6, Math.round(Math.sqrt(n * 1.3))));
     const w = (ancho - gap * (c - 1)) / c;
-    const h = Math.max(70, w * 0.8);
-    mejor = { cols: c, aspect: `${w.toFixed(1)} / ${h.toFixed(1)}`, tam: w * h };
+    mejor = { cols: c, aspect: `${w.toFixed(1)} / ${w.toFixed(1)}`, score: 0 };
   }
 
   return mejor;
