@@ -436,21 +436,20 @@ async function mostrarVista(nombre) {
 function inicializarTapLargo() {
   const zona = document.getElementById('zona-edicion');
   let timer = null;
-  let activado = false;
 
-  const empezar = () => {
-    if (activado) return;
-    zona.classList.add('activando');
-    timer = setTimeout(() => {
-      activado = true;
-      zona.classList.remove('activando');
-      pedirPin();
-    }, TAP_LARGO_MS);
-  };
   const cancelar = () => {
     if (timer) { clearTimeout(timer); timer = null; }
     zona.classList.remove('activando');
-    activado = false;
+  };
+
+  const empezar = (e) => {
+    cancelar();
+    zona.classList.add('activando');
+    timer = setTimeout(() => {
+      timer = null;
+      zona.classList.remove('activando');
+      pedirPin();
+    }, TAP_LARGO_MS);
   };
 
   zona.addEventListener('touchstart', empezar, { passive: true });
