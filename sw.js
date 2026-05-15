@@ -3,7 +3,7 @@
    Cache-first para uso 100% offline
    ========================================================= */
 
-const CACHE_NAME = 'hablaconmigo-v3';
+const CACHE_NAME = 'hablaconmigo-v4';
 const ASSETS = [
   './',
   './index.html',

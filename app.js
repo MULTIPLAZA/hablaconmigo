@@ -15,7 +15,7 @@ const STORE_BOTONES = 'botones';
 const STORE_CONFIG = 'config';
 
 const PIN_DEFAULT = '1234';
-const TAP_LARGO_MS = 5000;
+const TAP_LARGO_MS = 3000;
 
 /* Biblioteca de palabras pre-armadas, agrupadas por categoria.
    IMPORTANTE: las palabras llevan tildes/enie para que el TTS pronuncie bien.
@@ -440,13 +440,16 @@ function inicializarTapLargo() {
 
   const empezar = () => {
     if (activado) return;
+    zona.classList.add('activando');
     timer = setTimeout(() => {
       activado = true;
+      zona.classList.remove('activando');
       pedirPin();
     }, TAP_LARGO_MS);
   };
   const cancelar = () => {
     if (timer) { clearTimeout(timer); timer = null; }
+    zona.classList.remove('activando');
     activado = false;
   };
 

@@ -60,15 +60,44 @@ body {
   justify-content: center;
 }
 
+/* zona de acceso a modo edicion: invisible para Mariano,
+   pero con un punto chiquito visible para el padre */
 .zona-edicion {
   position: fixed;
-  top: 0;
+  top: env(safe-area-inset-top, 0);
   left: 0;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   z-index: 100;
   cursor: pointer;
-  /* invisible pero clickeable */
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 14px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.zona-edicion::after {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: .22;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+/* mientras se mantiene apretado: crece y se llena en 3 segundos */
+.zona-edicion.activando::after {
+  opacity: 1;
+  transform: scale(2);
+  animation: zona-cargando 3s linear forwards;
+}
+
+@keyframes zona-cargando {
+  0%   { box-shadow: 0 0 0 0 var(--primary); }
+  100% { box-shadow: 0 0 0 28px var(--primary-light); }
 }
 
 .grilla {
